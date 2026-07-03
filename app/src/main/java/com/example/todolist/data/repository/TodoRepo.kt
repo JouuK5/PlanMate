@@ -18,5 +18,9 @@ interface TodoRepo {
     suspend fun deleteTodo(todo: TodoEntity)
     suspend fun deleteTodoCollection(todoCollection: TodoCollection)
 
+    suspend fun clearLocalDatabase()
+
     suspend fun favoriteCollection(todoCollection: TodoCollection)
+
+    suspend fun syncDataFromFirestore()
 }

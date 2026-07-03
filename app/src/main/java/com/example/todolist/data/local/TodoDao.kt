@@ -46,4 +46,10 @@ interface TodoDao {
     @Query("SELECT * FROM todos WHERE collection_id = :id")
     fun getTodoCollectionById(id: Long): Flow<List<TodoEntity>>
 
+    // xử lý xóa room db khi logout
+    @Query("DELETE FROM todos")
+    suspend fun clearAllTodo()
+    @Query("DELETE FROM todo_collection")
+    suspend fun clearAllToDoCollection()
+
 }

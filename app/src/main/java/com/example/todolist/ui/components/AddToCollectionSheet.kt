@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,10 +19,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.todolist.data.local.TodoCollection
 import com.example.todolist.ui.theme.CyanPrimary
 import com.example.todolist.ui.theme.TextPrimary
 import com.example.todolist.ui.theme.TextSecondary
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +34,7 @@ fun AddToCollectionSheet(
     showSheet: Boolean,
     collections: List<TodoCollection>,
     onDismissRequest: () -> Unit,
-    onAddTask: (String, Long) -> Unit
+    onAddTask: (String, Long, Long?) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -38,10 +43,13 @@ fun AddToCollectionSheet(
     var selectedCollection by remember { mutableStateOf<TodoCollection?>(null) }
     var taskTitle by remember { mutableStateOf("") }
 
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    var selectedDateMillis by remember { mutableStateOf<Long?>(null) }
+
     if (showSheet) {
         ModalBottomSheet(
             onDismissRequest = {
-                // Reset lại khi đóng
                 step = 1
                 taskTitle = ""
                 selectedCollection = null
@@ -51,7 +59,10 @@ fun AddToCollectionSheet(
             containerColor = Color.White
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().imePadding().padding(bottom = 24.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding()
+                    .padding(bottom = 24.dp)
             ) {
                 if (step == 1) {
                     // ================= BƯỚC 1: HIỂN THỊ DANH SÁCH THƯ MỤC =================
@@ -115,20 +126,76 @@ fun AddToCollectionSheet(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(
+                                    Icons.Default.CalendarMonth,
+                                    contentDescription = "Date",
+                                    tint = CyanPrimary
+                                )
+                            }
+
+                            if (selectedDateMillis != null) {
+                                val formatter = remember {
+                                    SimpleDateFormat(
+                                        "dd/MM/yyyy",
+                                        Locale.getDefault()
+                                    )
+                                }
+                                Text(
+                                    text = formatter.format(Date(selectedDateMillis!!)),
+                                    color = CyanPrimary,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.padding(start = 4.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+
+
                             IconButton(
                                 onClick = {
                                     if (taskTitle.isNotBlank() && selectedCollection != null) {
-                                        onAddTask(taskTitle, selectedCollection!!.id)
+                                        onAddTask(taskTitle, selectedCollection!!.id, selectedDateMillis)
                                         taskTitle = ""
                                         step = 1
                                         onDismissRequest()
                                     }
                                 },
-                                modifier = Modifier.background(if (taskTitle.isNotBlank()) CyanPrimary else TextSecondary.copy(alpha = 0.5f), CircleShape).size(48.dp)
+                                modifier = Modifier.background(
+                                    if (taskTitle.isNotBlank()) CyanPrimary else TextSecondary.copy(alpha = 0.5f
+                                    ), CircleShape)
+                                    .size(48.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.ArrowUpward, contentDescription = "Add Task", tint = Color.White)
+                                Icon(
+                                    imageVector = Icons.Default.ArrowUpward,
+                                    contentDescription = "Add Task",
+                                    tint = Color.White
+                                )
                             }
                         }
+                    }
+                }
+                if (showDatePicker) {
+                    DatePickerDialog(
+                        onDismissRequest = { showDatePicker = false },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                // Lấy thời gian người dùng vừa chọn lưu vào biến
+                                selectedDateMillis = datePickerState.selectedDateMillis
+                                showDatePicker = false
+                            }) {
+                                Text("Xác nhận", color = CyanPrimary)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDatePicker = false }) {
+                                Text(
+                                    "Hủy",
+                                    color = TextSecondary
+                                )
+                            }
+                        }
+                    ) {
+                        DatePicker(state = datePickerState)
                     }
                 }
             }

@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-kapt")
-}
+    alias(libs.plugins.google.services)}
 
 android {
     namespace = "com.example.todolist"
@@ -69,6 +69,7 @@ dependencies {
     // 4. Hilt (Dùng KAPT)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // 5. DataStore
     implementation(libs.datastore.preferences)
@@ -83,5 +84,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     // 9. THÊM THƯ VIỆN RUNTIME CHO DIỄN DỊCH ĐỐI TƯỢNG (SERIALIZATION)
     implementation(libs.kotlinx.serialization.json)
+
+    //10.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 }
 

@@ -10,7 +10,7 @@ val GrayLight = Color(0xFFF5F5F5)
 
 //pastel
 val LightBlueBackground = Color(0xFFF7FBFF)
-val CyanPrimary = Color(0xFF00C4FF)
+val CyanPrimary = Color(0xFF74EAFF)
 val PinkFavorite = Color(0xFFFF66A3)
 val TextPrimary = Color(0xFF1E293B)
 val TextSecondary = Color(0xFF64748B)

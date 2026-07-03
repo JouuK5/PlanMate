@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "986523476716",
+    "project_id": "planmate-48f3f",
+    "storage_bucket": "planmate-48f3f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986523476716:android:67c3879577e2ce8d077bc9",
+        "android_client_info": {
+          "package_name": "com.example.todolist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "986523476716-fqr6nbvr2bmomdprlnqfslpvgd9fee5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.todolist",
+            "certificate_hash": "2bd8ce37cb7405d4e2d4639c176c8bfbc95ae61a"
+          }
+        },
+        {
+          "client_id": "986523476716-pdsdnijal48qd5rkl8n1q7fcfl354433.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoqYjWv_RQglMrKYtNb8X-3BVO8K2HaRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986523476716-pdsdnijal48qd5rkl8n1q7fcfl354433.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,8 +21,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todolist.navigation.Screen
 import com.example.todolist.ui.theme.*
+import com.example.todolist.ui.viewmodels.AuthViewModel
 
 @Composable
 fun FlowDoDrawer(
@@ -28,8 +33,12 @@ fun FlowDoDrawer(
     onNavigateToCalendar: () -> Unit = {},
     onNavigateToInbox: () -> Unit = {},
     onNavigateToAll: () -> Unit = {},
-    onNavigateToFav: () -> Unit = {}
+    onNavigateToFav: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
 ) {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val currentUser by authViewModel.currentUser.collectAsState()
+
     ModalDrawerSheet(
         drawerContainerColor = Color.White,
         modifier = Modifier.width(300.dp)
@@ -50,8 +59,8 @@ fun FlowDoDrawer(
                 Icon(Icons.Default.Person, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(32.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Guest User", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextPrimary)
-            Text(text = "Sync to save data", fontSize = 12.sp, color = TextSecondary)
+            Text(text = currentUser?.email ?: "Guest User", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextPrimary)
+            Text(text = if (currentUser == null) "Sync to save data" else "Cloud Sync Enabled", fontSize = 12.sp, color = TextSecondary)
         }
 
         HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
@@ -70,6 +79,24 @@ fun FlowDoDrawer(
 
         HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
         // Footer
+        if (currentUser == null) {
+            DrawerMenuItem(
+                icon = Icons.Default.Sync,
+                text = "Sync (Log In)",
+                isSelected = false,
+                tint = CyanPrimary,
+                onClick = { onNavigateToLogin() }
+            )
+        } else {
+            DrawerMenuItem(
+                icon = Icons.AutoMirrored.Filled.Logout,
+                text = "Log Out",
+                isSelected = false,
+                tint = Color.Red.copy(alpha = 0.7f),
+                onClick = { authViewModel.logout() }
+            )
+        }
+
         DrawerMenuItem(icon = Icons.Outlined.Info, text = "About App", isSelected = false) {}
         Spacer(modifier = Modifier.height(24.dp))
     }

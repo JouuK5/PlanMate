@@ -17,11 +17,11 @@ import androidx.room.PrimaryKey
     ]
 )
 data class TodoEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     @ColumnInfo(name = "collection_id", index = true)
-    val collectionId: Long?,
+    val collectionId: Long? = 0L,
     @ColumnInfo
-    val title: String,
+    val title: String = "",
     @ColumnInfo(name = "description")
     val description: String? = null,
     @ColumnInfo(name = "is_completed")
@@ -31,5 +31,8 @@ data class TodoEntity(
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "due_at")
-    val dueDate: Long? = null
+    val dueDate: Long? = null,
+
+    @ColumnInfo(name = "user_id")
+    val userId: String = ""
 )

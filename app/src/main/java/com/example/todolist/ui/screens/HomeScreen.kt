@@ -53,7 +53,8 @@ fun HomeScreen(
     onNavigateToAllCollections: () -> Unit,
     onNavigateToCollectionDetail: (Long) -> Unit,
     onNavigateToFavorite: () -> Unit,
-    onNavigateToCalendar: () -> Unit
+    onNavigateToCalendar: () -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     val collections by viewModel.collections.collectAsState()
     val allTodos by viewModel.todos.collectAsState()
@@ -107,6 +108,10 @@ fun HomeScreen(
                 onNavigateToFav = {
                     scope.launch { drawerState.close() }
                     onNavigateToFavorite()
+                },
+                onNavigateToLogin = {
+                    scope.launch { drawerState.close() }
+                    onNavigateToLogin()
                 }
             )
         }
@@ -261,8 +266,8 @@ fun HomeScreen(
             showSheet = showCollectionTaskSheet,
             collections = collections,
             onDismissRequest = { showCollectionTaskSheet = false },
-            onAddTask = { taskTitle, collectionId ->
-                viewModel.addTodo(collectionId = collectionId, title = taskTitle)
+            onAddTask = { taskTitle, collectionId, dueDate ->
+                viewModel.addTodo(collectionId = collectionId, title = taskTitle, description = "", dueDate = dueDate)
             }
         )
     }

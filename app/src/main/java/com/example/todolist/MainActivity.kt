@@ -16,30 +16,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todolist.navigation.AppNavigation
 import com.example.todolist.ui.screens.AllCollectionsScreen
 import com.example.todolist.ui.screens.CollectionDetailScreen
 import com.example.todolist.ui.screens.HomeScreen
 import com.example.todolist.ui.theme.LightBlueBackground
 import com.example.todolist.ui.theme.TodoListTheme
+import com.example.todolist.ui.viewmodels.AuthViewModel
 import com.example.todolist.ui.viewmodels.TodoViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: TodoViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val viewModel: TodoViewModel = hiltViewModel()
+            val authViewModel: AuthViewModel = hiltViewModel()
+
             TodoListTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation(viewModel = viewModel)
+                    AppNavigation(viewModel = viewModel, authViewModel = authViewModel)
                 }
             }
         }

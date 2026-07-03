@@ -11,13 +11,27 @@ import com.example.todolist.ui.screens.HomeScreen
 import com.example.todolist.ui.viewmodels.TodoViewModel
 import com.example.todolist.navigation.Screen
 import com.example.todolist.ui.screens.CalendarScreen
+import com.example.todolist.ui.screens.LoginScreen
+import com.example.todolist.ui.viewmodels.AuthViewModel
 
 @Composable
-fun AppNavigation(viewModel: TodoViewModel) {
+fun AppNavigation(viewModel: TodoViewModel, authViewModel: AuthViewModel) {
     val navController = rememberNavController()
+    val startDestination = if(authViewModel.isUserAuthenticated()) Screen.Home else Screen.Login
 
     // Bắt đầu bằng Object Home
     NavHost(navController = navController, startDestination = Screen.Home) {
+
+        composable<Screen.Login> {
+            LoginScreen(
+                authViewModel = authViewModel,
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home) {
+                        popUpTo(Screen.Login) { inclusive = true }
+                    }
+                }
+            )
+        }
 
         // 1. MÀN HÌNH HOME
         composable<Screen.Home> {
@@ -35,6 +49,9 @@ fun AppNavigation(viewModel: TodoViewModel) {
                 },
                 onNavigateToCalendar = {
                     navController.navigate(Screen.Calendar)
+                },
+                onNavigateToLogin = {
+                    navController.navigate(Screen.Login)
                 }
             )
         }

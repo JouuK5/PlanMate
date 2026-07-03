@@ -62,6 +62,7 @@ fun CalendarScreen(
     var showIndependentTaskSheet by remember { mutableStateOf(false) }
     var showCollectionTaskSheet by remember { mutableStateOf(false) }
 
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -206,15 +207,20 @@ fun CalendarScreen(
             showSheet = showIndependentTaskSheet,
             onDismissRequest = { showIndependentTaskSheet = false },
             onAddTask = { taskTitle, dueDate ->
-                viewModel.addTodo(title = taskTitle, dueDate = dueDate)
+                // NẾU user không chọn ngày ở Sheet (dueDate bị null), lấy ngày đang focus trên lịch
+                val finalDate = dueDate ?: selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
+                viewModel.addTodo(title = taskTitle, dueDate = finalDate)
             }
         )
+
         AddToCollectionSheet(
             showSheet = showCollectionTaskSheet,
             collections = collections,
             onDismissRequest = { showCollectionTaskSheet = false },
-            onAddTask = { taskTitle, collectionId ->
-                viewModel.addTodo(collectionId = collectionId, title = taskTitle)
+            onAddTask = { taskTitle, collectionId, dueDate ->
+                // Tương tự, bắt buộc phải có ngày để hiển thị lên lịch
+                val finalDate = dueDate ?: selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
+                viewModel.addTodo(collectionId = collectionId, title = taskTitle, description = "", dueDate = finalDate)
             }
         )
     }
