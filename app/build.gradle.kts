@@ -90,6 +90,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+    // Thư viện xử lý thông báo của Firebase
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     //10. coil
     implementation("io.coil-kt:coil-compose:2.6.0")
