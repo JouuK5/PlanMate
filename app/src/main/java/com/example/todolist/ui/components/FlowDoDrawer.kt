@@ -18,10 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.todolist.navigation.Screen
 import com.example.todolist.ui.theme.*
 import com.example.todolist.ui.viewmodels.AuthViewModel
@@ -56,7 +58,34 @@ fun FlowDoDrawer(
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Person, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(32.dp))
+                if (currentUser == null) {
+                    // 1. TRẠNG THÁI KHÁCH: Icon mặc định
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = TextSecondary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                } else if (currentUser?.photoUrl != null) {
+                    // 2. ĐĂNG NHẬP GOOGLE: Tải ảnh đại diện
+                    AsyncImage(
+                        model = currentUser?.photoUrl,
+                        contentDescription = "Avatar",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    // 3. ĐĂNG NHẬP EMAIL: Lấy chữ cái đầu tiên
+                    val emailStr = currentUser?.email ?: ""
+                    val initial = if (emailStr.isNotEmpty()) emailStr.first().uppercase() else "?"
+
+                    Text(
+                        text = initial,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp,
+                        color = CyanPrimary // Hoặc màu TextPrimary tùy ý bạn
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = currentUser?.email ?: "Guest User", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextPrimary)
@@ -92,7 +121,6 @@ fun FlowDoDrawer(
                 icon = Icons.AutoMirrored.Filled.Logout,
                 text = "Log Out",
                 isSelected = false,
-                tint = Color.Red.copy(alpha = 0.7f),
                 onClick = { authViewModel.logout() }
             )
         }

@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.PropertyName
 
 @Entity(
     tableName = "todos",
@@ -24,8 +25,13 @@ data class TodoEntity(
     val title: String = "",
     @ColumnInfo(name = "description")
     val description: String? = null,
+
+    @get:PropertyName("Completed")
+    @set:PropertyName("Completed")
     @ColumnInfo(name = "is_completed")
-    val isCompleted: Boolean = false,
+    var isCompleted: Boolean = false,
+
+
     @ColumnInfo(name = "is_favorite")
     val isFavorite: Boolean = false,
     @ColumnInfo(name = "created_at")
