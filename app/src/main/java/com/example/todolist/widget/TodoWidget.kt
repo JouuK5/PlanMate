@@ -1,17 +1,18 @@
 package com.example.todolist.widget
-
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.action.actionStartActivity
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
@@ -23,6 +24,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import com.example.todolist.MainActivity
 import com.example.todolist.R
 import com.example.todolist.data.repository.TodoRepo
 import com.example.todolist.ui.theme.CardBackground
@@ -34,9 +36,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.first
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.Calendar
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -45,28 +45,27 @@ interface WidgetEntryPoint {
 }
 
 class TodoWidget : GlanceAppWidget() {
-
-    // Đây là nơi cung cấp dữ liệu cho Widget
+    override val sizeMode = SizeMode.Exact
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
         val appContext = context.applicationContext
         val entryPoint = EntryPointAccessors.fromApplication(appContext, WidgetEntryPoint::class.java)
         val repository = entryPoint.getTodoRepo()
 
-        // 3. Lấy dữ liệu thật từ Database (Dùng first() để lấy ảnh chụp dữ liệu mới nhất)
         val allTodos = repository.getTodo().first()
         val todayTasks = allTodos.filter { !it.isCompleted && isToday(it.dueDate) }
-        // Lọc ra các công việc chưa hoàn thành, lấy tối đa 5 cái để hiện trên Widget
         val pendingTasks = todayTasks.take(5)
         val totalTasksLeft = todayTasks.size
 
         provideContent {
+            // Bao bọc toàn bộ nội dung trong Column và gắn sự kiện click
             Column(
                 modifier = GlanceModifier
                     .fillMaxSize()
                     .background(CardBackground)
                     .padding(20.dp)
-                    .cornerRadius(20.dp) // Border radius: 20dp
+                    .cornerRadius(20.dp)
+                    .clickable(actionStartActivity<MainActivity>())
             ) {
                 Row(
                     modifier = GlanceModifier.fillMaxWidth().padding(bottom = 16.dp),
@@ -83,7 +82,6 @@ class TodoWidget : GlanceAppWidget() {
                     )
                 }
 
-                // Danh sách công việc
                 LazyColumn(modifier = GlanceModifier.defaultWeight()) {
                     if (pendingTasks.isEmpty()) {
                         item {
@@ -111,7 +109,6 @@ class TodoWidget : GlanceAppWidget() {
                                     modifier = GlanceModifier.defaultWeight().padding(start = 12.dp)
                                 )
 
-                                // Nếu task này có đặt giờ (dueDate != null), hiện icon trái tim/cảnh báo
                                 if (task.dueDate != null) {
                                     Image(
                                         provider = ImageProvider(R.drawable.ic_heart_widget),
@@ -124,7 +121,6 @@ class TodoWidget : GlanceAppWidget() {
                     }
                 }
 
-                // Footer: Dòng kẻ mờ và số lượng task
                 Spacer(modifier = GlanceModifier.height(8.dp))
                 Box(modifier = GlanceModifier.fillMaxWidth().height(1.dp).background(DividerColor)) {}
                 Spacer(modifier = GlanceModifier.height(12.dp))
@@ -143,10 +139,6 @@ class TodoWidget : GlanceAppWidget() {
     }
 }
 
-// Data class ảo phục vụ vẽ UI
-data class WidgetTask(val id: Long, val title: String, val isFavorite: Boolean)
-
-// Receiver để hệ thống Android nhận diện Widget này
 class TodoWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = TodoWidget()
 }
@@ -159,11 +151,11 @@ fun widgetColor(color: Color): ColorProvider {
 }
 
 fun isToday(timestamp: Long?): Boolean{
-    if (timestamp == null) return false // Nếu task không có ngày hạn, bỏ qua
+    if (timestamp == null) return false
 
-    val today = java.util.Calendar.getInstance()
-    val taskDate = java.util.Calendar.getInstance().apply { timeInMillis = timestamp }
+    val today = Calendar.getInstance()
+    val taskDate = Calendar.getInstance().apply { timeInMillis = timestamp }
 
-    return today.get(java.util.Calendar.YEAR) == taskDate.get(java.util.Calendar.YEAR) &&
-            today.get(java.util.Calendar.DAY_OF_YEAR) == taskDate.get(java.util.Calendar.DAY_OF_YEAR)
+    return today.get(Calendar.YEAR) == taskDate.get(Calendar.YEAR) &&
+            today.get(Calendar.DAY_OF_YEAR) == taskDate.get(Calendar.DAY_OF_YEAR)
 }

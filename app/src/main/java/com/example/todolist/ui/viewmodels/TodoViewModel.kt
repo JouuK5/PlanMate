@@ -25,6 +25,12 @@ class TodoViewModel @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
+    init {
+        // Bật ăng-ten đồng bộ với Firebase ngay khi ViewModel được tạo
+        viewModelScope.launch {
+            repository.syncDataFromFirestore()
+        }
+    }
 
     //get all todo
     val todos: StateFlow<List<TodoEntity>> = repository.getTodo()

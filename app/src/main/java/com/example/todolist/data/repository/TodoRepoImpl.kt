@@ -4,9 +4,12 @@ import com.example.todolist.data.local.TodoCollection
 import com.example.todolist.data.local.TodoDao
 import com.example.todolist.data.local.TodoEntity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -160,7 +163,7 @@ class TodoRepoImpl(
     override suspend fun syncDataFromFirestore() {
         val userId = auth.currentUser?.uid ?: return
 
-        try{
+
             val collectionSnapshot = firestore.collection("todo_collections")
                 .whereEqualTo("userId", userId)
                 .get()
@@ -171,18 +174,31 @@ class TodoRepoImpl(
                 todoDAO.insertTodoCollection(collection)
             }
 
-            val todosSnapshot = firestore.collection("todo")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
+        firestore.collection("todo")
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    android.util.Log.e("LOI_SYNC", "Lỗi đồng bộ: ", error)
+                    return@addSnapshotListener
+                }
 
-            val todos = todosSnapshot.toObjects(TodoEntity::class.java)
-            todos.forEach { todo ->
-                todoDAO.insertTodo(todo)
+                CoroutineScope(Dispatchers.IO).launch {
+                    // Quét các thay đổi vừa xảy ra trên Firebase (từ máy khác)
+                    snapshot?.documentChanges?.forEach { dc ->
+                        val todo = dc.document.toObject(TodoEntity::class.java)
+                        when (dc.type) {
+                            // Nếu có task mới tạo hoặc bị sửa từ máy khác -> Ghi đè vào Room
+                            DocumentChange.Type.ADDED, DocumentChange.Type.MODIFIED -> {
+                                todoDAO.insertTodo(todo)
+                            }
+                            // Nếu máy khác xóa task -> Xóa luôn trong Room máy này
+                            DocumentChange.Type.REMOVED -> {
+                                todoDAO.deleteTodo(todo)
+                            }
+                        }
+                    }
+                }
             }
-        } catch (e: Exception){
-            android.util.Log.e("LOI_SYNC_DATA", "Lý do tải xịt: ${e.message}", e)
-            e.printStackTrace()
-        }
+
     }
 }
