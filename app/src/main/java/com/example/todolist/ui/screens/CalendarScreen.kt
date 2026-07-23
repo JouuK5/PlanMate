@@ -209,7 +209,7 @@ fun CalendarScreen(
             onAddTask = { taskTitle, dueDate ->
                 // NẾU user không chọn ngày ở Sheet (dueDate bị null), lấy ngày đang focus trên lịch
                 val finalDate = dueDate ?: selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
-                viewModel.addTodo(title = taskTitle, dueDate = finalDate)
+                viewModel.addTodo(title = taskTitle, exactDueDate = finalDate)
             }
         )
 
@@ -220,7 +220,7 @@ fun CalendarScreen(
             onAddTask = { taskTitle, collectionId, dueDate ->
                 // Tương tự, bắt buộc phải có ngày để hiển thị lên lịch
                 val finalDate = dueDate ?: selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
-                viewModel.addTodo(collectionId = collectionId, title = taskTitle, description = "", dueDate = finalDate)
+                viewModel.addTodo(collectionId = collectionId, title = taskTitle, description = "", exactDueDate = finalDate)
             }
         )
     }

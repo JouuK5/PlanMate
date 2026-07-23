@@ -143,6 +143,15 @@ class TodoRepoImpl(
         }
     }
 
+    override suspend fun restoreTodo(todo: TodoEntity) {
+        todoDAO.insertTodo(todo)
+
+        if(todo.userId.isNotEmpty()){
+            firestore.collection("todo")
+                .document(todo.id.toString())
+        }
+    }
+
     override suspend fun clearLocalDatabase() {
         todoDAO.clearAllTodo()
         todoDAO.clearAllToDoCollection()

@@ -52,7 +52,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String, message: String) {
-        // ... (Giữ nguyên toàn bộ code cấu hình kênh và build thông báo của bạn ở đây)
         val channelId = "planmate_channel_id"
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

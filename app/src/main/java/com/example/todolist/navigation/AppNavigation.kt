@@ -17,7 +17,6 @@ import com.example.todolist.ui.viewmodels.AuthViewModel
 @Composable
 fun AppNavigation(viewModel: TodoViewModel, authViewModel: AuthViewModel) {
     val navController = rememberNavController()
-    val startDestination = if(authViewModel.isUserAuthenticated()) Screen.Home else Screen.Login
 
     // Bắt đầu bằng Object Home
     NavHost(navController = navController, startDestination = Screen.Home) {

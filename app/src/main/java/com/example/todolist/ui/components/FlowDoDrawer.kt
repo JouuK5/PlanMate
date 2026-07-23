@@ -101,7 +101,6 @@ fun FlowDoDrawer(
         DrawerMenuItem(icon = Icons.Outlined.MailOutline, text = "All Collections", isSelected = currentRoute is Screen.AllCollections) { (onNavigateToAll())}
         DrawerMenuItem(icon = Icons.Outlined.CalendarMonth, text = "Calendar", isSelected = currentRoute is Screen.Calendar) { onNavigateToCalendar() }
         DrawerMenuItem(icon = Icons.Outlined.FavoriteBorder, text = "Favorites", isSelected = currentRoute is Screen.Favorite, tint = PinkFavorite) {onNavigateToFav()}
-        DrawerMenuItem(icon = Icons.Outlined.Delete, text = "Trash Bin", isSelected = false) {  }
         DrawerMenuItem(icon = Icons.Outlined.Settings, text = "Settings", isSelected = false) {  }
 
         Spacer(modifier = Modifier.weight(1f))

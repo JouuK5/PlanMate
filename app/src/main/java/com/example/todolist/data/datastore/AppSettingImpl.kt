@@ -17,7 +17,7 @@ class AppSettingImpl(private val context: Context) : AppSetting {
     override val appSettingDataFlow: Flow<AppSettingData>
         get()= context.dataStoreAppSetting.data.map { pref ->
             AppSettingData(
-                isNotificationEnabled = pref[AppSettingDataStoreKeys.IS_NOTIFICATION_ENABLED] ?: false
+                isNotificationEnabled = pref[AppSettingDataStoreKeys.IS_NOTIFICATION_ENABLED] ?: true
             )
         }
 

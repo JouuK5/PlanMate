@@ -57,7 +57,7 @@ fun ExpandableFab(
             contentColor = Color.White,
             modifier = Modifier
                 .size(64.dp)
-                .offset(y = -40.dp)
+                .offset(y = -50.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,

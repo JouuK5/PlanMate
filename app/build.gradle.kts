@@ -95,5 +95,9 @@ dependencies {
 
     //10. coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    //11. glance widget
+    // Tích hợp Jetpack Glance cho App Widget
+    implementation("androidx.glance:glance-appwidget:1.1.1")
 }
 

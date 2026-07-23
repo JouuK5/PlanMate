@@ -18,6 +18,8 @@ interface TodoRepo {
     suspend fun deleteTodo(todo: TodoEntity)
     suspend fun deleteTodoCollection(todoCollection: TodoCollection)
 
+    suspend fun restoreTodo(todo: TodoEntity)
+
     suspend fun clearLocalDatabase()
 
     suspend fun favoriteCollection(todoCollection: TodoCollection)

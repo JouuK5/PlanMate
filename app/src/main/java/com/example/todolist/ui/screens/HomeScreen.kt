@@ -279,7 +279,7 @@ fun HomeScreen(
             showSheet = showIndependentTaskSheet,
             onDismissRequest = { showIndependentTaskSheet = false },
             onAddTask = { taskTitle, dueDate ->
-                viewModel.addTodo(title = taskTitle, dueDate = dueDate)
+                viewModel.addTodo(title = taskTitle, exactDueDate = dueDate)
             }
         )
         AddToCollectionSheet(
@@ -287,7 +287,7 @@ fun HomeScreen(
             collections = collections,
             onDismissRequest = { showCollectionTaskSheet = false },
             onAddTask = { taskTitle, collectionId, dueDate ->
-                viewModel.addTodo(collectionId = collectionId, title = taskTitle, description = "", dueDate = dueDate)
+                viewModel.addTodo(collectionId = collectionId, title = taskTitle, description = "", exactDueDate = dueDate)
             }
         )
     }

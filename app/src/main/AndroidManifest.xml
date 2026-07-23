@@ -4,8 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
     <!-- Quyền hiển thị thông báo cho Android 13 trở lên -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Quyền hẹn giờ chính xác (Cho Android 12+) -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <application
         android:name=".App"
@@ -17,24 +22,51 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TodoList">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.TodoList">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
+        <!-- Firebase Messaging -->
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
+
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
+
         </service>
+
+        <!-- Alarm -->
+        <receiver
+            android:name=".service.AlarmReceiver"
+            android:exported="false" />
+
+        <!-- Glance App Widget -->
+        <receiver
+            android:name=".widget.TodoWidgetReceiver"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/todo_widget_info" />
+
+        </receiver>
+
     </application>
 
 </manifest>
